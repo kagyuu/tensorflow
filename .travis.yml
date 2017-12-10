@@ -9,14 +9,14 @@ cache:
 
 install: 
 
-  - brew install ccache
+  - brew tap caskroom/drivers
+  - brew cask install nvidia-cuda
+  - brew install ccache bazel coreutils python3
   - PATH=$PATH:/usr/local/opt/ccache/libexec
   - brew tap caskroom/drivers
 #  - brew upgrade boost coreutils giflib git go libevent libgcrypt libgeotiff libpng 1.6.29 libssh libtiff libxml2 msgpack node openssl pcre pkg-config pyenv python readline wget
-  - brew install bazel coreutils python3
-  -    PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+  - PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
   - pip3 install --upgrade pip six numpy wheel 
-  - brew cask install nvidia-cuda
   - DYLD_LIBRARY_PATH="/usr/local/cuda/lib"
   - bazel build --config=opt --config=cuda -s --verbose_failures //tensorflow/tools/pip_package:build_pip_package
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/t_pkg
