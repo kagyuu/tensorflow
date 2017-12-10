@@ -16,7 +16,7 @@ install:
   - brew install bazel coreutils python3
   -    PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
   - pip3 install --upgrade pip six numpy wheel 
-  - brew cask install cuda
+  - brew cask install nvidia-cuda
   - DYLD_LIBRARY_PATH="/usr/local/cuda/lib"
   - bazel build --config=opt --config=cuda -s --verbose_failures //tensorflow/tools/pip_package:build_pip_package
   - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/t_pkg
