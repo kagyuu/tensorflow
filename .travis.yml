@@ -1,0 +1,23 @@
+os: osx
+language: c++
+osx_image: xcode8.1
+python: "3.6"
+cache: 
+  - ccache
+  - homebrew
+  - pip
+
+install: 
+
+  - brew install ccache
+  - PATH=$PATH:/usr/local/opt/ccache/libexec
+  - brew tap caskroom/drivers
+#  - brew upgrade boost coreutils giflib git go libevent libgcrypt libgeotiff libpng 1.6.29 libssh libtiff libxml2 msgpack node openssl pcre pkg-config pyenv python readline wget
+  - brew install bazel coreutils python3
+  -    PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+  - pip3 install --upgrade pip six numpy wheel 
+  - brew cask install cuda
+  - DYLD_LIBRARY_PATH="/usr/local/cuda/lib"
+  - bazel build --config=opt --config=cuda -s --verbose_failures //tensorflow/tools/pip_package:build_pip_package
+  - bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/t_pkg
+  - pip3 install /tmp/t_pkg/tensorflow-?.{?,??}.{?,??,?rc?}-cp36-cp36m-macosx_10_??_x86_64.whl
