@@ -8,10 +8,10 @@ cache:
   - pip
 
 install: 
-
+  - brew install ccache
   - brew tap caskroom/drivers
   - brew cask install nvidia-cuda
-  - brew install ccache bazel coreutils python3
+  - brew install bazel coreutils python3
   - PATH=$PATH:/usr/local/opt/ccache/libexec
   - brew tap caskroom/drivers
 #  - brew upgrade boost coreutils giflib git go libevent libgcrypt libgeotiff libpng 1.6.29 libssh libtiff libxml2 msgpack node openssl pcre pkg-config pyenv python readline wget
