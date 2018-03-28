@@ -16,13 +16,13 @@ limitations under the License.
 #if GOOGLE_CUDA
 #define EIGEN_USE_GPU
 
+#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
 #include "external/cub_archive/cub/util_ptx.cuh"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/kernels/depthwise_conv_op.h"
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/util/cuda_kernel_helper.h"
 #include "tensorflow/core/util/tensor_format.h"
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #define UNROLL
@@ -172,7 +172,7 @@ __global__ __launch_bounds__(1024, 2) void DepthwiseConv2dGPUKernelNHWCSmall(
     const DepthwiseArgs args, const T* input, const T* filter, T* output) {
   assert(CanLaunchDepthwiseConv2dGPUSmall(args));
   // Holds block plus halo and filter data for blockDim.x depths.
-  extern __shared__ unsigned char shared_memory[];
+  extern __shared__ __align__(sizeof(T) > 16 ? sizeof(T) : 16) unsigned char shared_memory[];
   T* const shared_data = reinterpret_cast<T*>(shared_memory);
 
   const int num_batches = args.batch;
@@ -452,7 +452,7 @@ __global__ __launch_bounds__(1024, 2) void DepthwiseConv2dGPUKernelNCHWSmall(
     const DepthwiseArgs args, const T* input, const T* filter, T* output) {
   assert(CanLaunchDepthwiseConv2dGPUSmall(args));
   // Holds block plus halo and filter data for blockDim.z depths.
-  extern __shared__ unsigned char shared_memory[];
+  extern __shared__ __align__(sizeof(T) > 16 ? sizeof(T) : 16) unsigned char shared_memory[];
   T* const shared_data = reinterpret_cast<T*>(shared_memory);
 
   const int num_batches = args.batch;
@@ -1118,7 +1118,7 @@ __launch_bounds__(1024, 2) void DepthwiseConv2dBackpropFilterGPUKernelNHWCSmall(
     const DepthwiseArgs args, const T* output, const T* input, T* filter) {
   assert(CanLaunchDepthwiseConv2dBackpropFilterGPUSmall(args, blockDim.z));
   // Holds block plus halo and filter data for blockDim.x depths.
-  extern __shared__ unsigned char shared_memory[];
+  extern __shared__ __align__(sizeof(T) > 16 ? sizeof(T) : 16) unsigned char shared_memory[];
   T* const shared_data = reinterpret_cast<T*>(shared_memory);
 
   const int num_batches = args.batch;
@@ -1388,7 +1388,7 @@ __launch_bounds__(1024, 2) void DepthwiseConv2dBackpropFilterGPUKernelNCHWSmall(
     const DepthwiseArgs args, const T* output, const T* input, T* filter) {
   assert(CanLaunchDepthwiseConv2dBackpropFilterGPUSmall(args, blockDim.x));
   // Holds block plus halo and filter data for blockDim.z depths.
-  extern __shared__ unsigned char shared_memory[];
+  extern __shared__ __align__(sizeof(T) > 16 ? sizeof(T) : 16) unsigned char shared_memory[];
   T* const shared_data = reinterpret_cast<T*>(shared_memory);
 
   const int num_batches = args.batch;
