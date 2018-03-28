@@ -39,7 +39,7 @@ __global__ void BucketizeCustomKernel(
     CudaDeviceArrayStruct<float> boundaries_array, int32* out) {
   const float* boundaries = GetCudaDeviceArrayOnDevice(&boundaries_array);
 
-  extern __shared__ __align__(sizeof(float)) unsigned char shared_mem[];
+  extern __shared__ __align__(sizeof(T) > 16 ? sizeof(T) : 16) unsigned char shared_mem[];
   float* shared_mem_boundaries = reinterpret_cast<float*>(shared_mem);
 
   if (useSharedMem) {
