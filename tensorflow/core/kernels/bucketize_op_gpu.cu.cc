@@ -39,7 +39,7 @@ __global__ void BucketizeCustomKernel(
     CudaDeviceArrayStruct<float> boundaries_array, int32* out) {
   const float* boundaries = GetCudaDeviceArrayOnDevice(&boundaries_array);
 
-  extern __shared__ __align__(sizeof(float)) unsigned char shared_mem[];
+  extern __shared__ unsigned char shared_mem[];
   float* shared_mem_boundaries = reinterpret_cast<float*>(shared_mem);
 
   if (useSharedMem) {
@@ -98,16 +98,15 @@ struct BucketizeFunctor<GPUDevice, T> {
     const int32 kMaxSharedMemBytes = 16384;
     if (shared_mem_size < d.sharedMemPerBlock() &&
         shared_mem_size < kMaxSharedMemBytes) {
-      BucketizeCustomKernel<T,
-                            true><<<config.block_count, config.thread_per_block,
-                                    shared_mem_size, d.stream()>>>(
-          input.size(), input.data(), boundaries_vector.size(),
-          boundaries_array.data(), output.data());
+      BucketizeCustomKernel<T, true>
+          <<<config.block_count, config.thread_per_block, shared_mem_size,
+             d.stream()>>>(input.size(), input.data(), boundaries_vector.size(),
+                           boundaries_array.data(), output.data());
     } else {
-      BucketizeCustomKernel<T, false><<<
-          config.block_count, config.thread_per_block, 0, d.stream()>>>(
-          input.size(), input.data(), boundaries_vector.size(),
-          boundaries_array.data(), output.data());
+      BucketizeCustomKernel<T, false>
+          <<<config.block_count, config.thread_per_block, 0, d.stream()>>>(
+              input.size(), input.data(), boundaries_vector.size(),
+              boundaries_array.data(), output.data());
     }
     return Status::OK();
   }
